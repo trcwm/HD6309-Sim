@@ -58,13 +58,15 @@ public:
 
         if (static_cast<int32_t>(pc) == m_breakpoint)
         {
-            halt();
+            //halt();
             m_debug = true;
         }
         
         if (m_debug)
         {
-            printf("PC: %04X -> %02X \t SP: %04X\n", pc, read(pc), s);
+            printf("PC: %04X -> %02X\tSP: %04X\tA: %02X\tB: %02X\n", pc, read(pc), s, (int32_t)a, (int32_t)b);
+            printf("\tDD: %04X\tX : %04X\tY: %04X\n", d, x, y);
+            printf("\tHEX: %02X%02X\n", read(0xDEFC+1), read(0xDEFC));
             mc6809::execute();
             usleep(1000*250);
         }

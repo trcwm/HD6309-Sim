@@ -9,3 +9,6 @@ compatible binaries for now.
 
 This will only compile/run on Linux.
 
+# Monitor commands
+* M XXXX - show memory at HEX address XXXX.
+* R XXXX - jump to HEX address XXXX and run.

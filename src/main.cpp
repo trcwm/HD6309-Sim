@@ -76,6 +76,8 @@ int main(int argc, char *argv[])
 
         if (result.count("break"))
         {
+            breakpoint = result["break"].as<int32_t>();
+            printf("Setting breakpoint address: %04X\n", breakpoint);
             machine.setBreakpoint(breakpoint);
         }    
 

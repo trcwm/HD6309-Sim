@@ -179,7 +179,7 @@ bool Machine::loadHex(const char *filename)
         case 3:
             address <<= 4;
             address |= hexchar(c);
-            printf("Address: 0x%04X\n", address);
+            //printf("Address: 0x%04X\n", address);
             state++;
             break;
         case 4: // expect ':'
@@ -199,10 +199,10 @@ bool Machine::loadHex(const char *filename)
             data |= hexchar(c);
             if (address < 0xE000)
             {
-                if ((address >= 0xCD00) && (address <= 0xCE00))
-                {
-                    printf("  %02X\n", data);
-                }
+                //if ((address >= 0xCD00) && (address <= 0xCE00))
+                //{
+                //    printf("  %02X\n", data);
+                //}
                 m_memory[address] = data;
             }
             else if (address >= 0xF000)

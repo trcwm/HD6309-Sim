@@ -17,6 +17,7 @@
 #include <string.h>
 #include <vector>
 #include <string>
+#include <iostream>
 #include <unistd.h>
 #include <termios.h>
 #include <thread>
@@ -52,32 +53,56 @@ int main(int argc, char *argv[])
     cxxopts::Options options("hd6309sim", "A simulator for the HD6309 computer");
 
     bool debug = false;
+    Machine machine;
+    int32_t breakpoint = -1;
+
+    options.show_positional_help();
     options.add_options()
         ("b,break", "Set a breakpoint at address", cxxopts::value<int32_t>())
         ("debug", "Enable 6809 debugger", cxxopts::value<bool>(debug))
+        ("help", "Print help")
         ("hex", "Hex file", cxxopts::value<std::vector<std::string>>())
     ;
 
-    Machine machine;
-
-    auto result = options.parse(argc, argv);
-
-    int32_t breakpoint = -1;
-    if (result.count("break"))
+    try
     {
-        machine.setBreakpoint(breakpoint);
-    }    
+        auto result = options.parse(argc, argv);
 
-    auto &v = result["hex"].as<std::vector<std::string> >();
-
-    for(auto hexfile : v)
-    {
-        if (!machine.loadHex(hexfile.c_str()))
+        if (result.count("help"))
         {
-            printf("Failed to load %s\n", hexfile.c_str());
-            return 1;
+            std::cout << options.help({"", "Group"}) << std::endl;
+            return 0;
+        }
+
+        if (result.count("break"))
+        {
+            machine.setBreakpoint(breakpoint);
+        }    
+
+        if (result.count("hex") > 0)
+        {
+            auto &v = result["hex"].as<std::vector<std::string> >();
+
+            for(auto hexfile : v)
+            {
+                if (!machine.loadHex(hexfile.c_str()))
+                {
+                    printf("Failed to load %s\n", hexfile.c_str());
+                    return 1;
+                }
+            }
+        }
+        else
+        {
+            printf("No .hex files specified -- running without a program!\n");
+            options.help();
         }
     }
+    catch(...)
+    {
+        return -1;
+    }    
+    
 
     if (debug)
     {

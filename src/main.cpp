@@ -58,8 +58,8 @@ int main(int argc, char *argv[])
 
     options.show_positional_help();
     options.add_options()
-        ("b,break", "Set a breakpoint at address", cxxopts::value<int32_t>())
-        ("debug", "Enable 6809 debugger", cxxopts::value<bool>(debug))
+        ("b,break", "Set a breakpoint at HEX address", cxxopts::value<std::string>())
+        ("trace", "Enable 6809 trace/debugger", cxxopts::value<bool>(debug))
         ("help", "Print help")
         ("hex", "Hex file", cxxopts::value<std::vector<std::string>>())
     ;
@@ -76,7 +76,8 @@ int main(int argc, char *argv[])
 
         if (result.count("break"))
         {
-            breakpoint = result["break"].as<int32_t>();
+            std::string hexnum = result["break"].as<std::string>();
+            breakpoint = (int)strtol(hexnum.c_str(), NULL, 16);
             printf("Setting breakpoint address: %04X\n", breakpoint);
             machine.setBreakpoint(breakpoint);
         }    

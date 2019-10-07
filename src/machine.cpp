@@ -20,6 +20,7 @@ Machine::Machine()
     m_trace = false;
     m_debug = false;
     m_pagereg = 0;
+    m_breakpoint = -1;
     m_memory = new Byte[1024*1024]; // 1 megabyte of memory!
 }
 
@@ -62,6 +63,10 @@ Byte Machine::read(Word address)
         {
             return m_uart.read(address - 0xE000);
         }
+        else if ((address >= 0xE020) && (address < 0xE030))
+        {
+            return m_diskio.readReg(address - 0xE020);
+        }
         return 0;
     }
     else 
@@ -92,6 +97,10 @@ void Machine::write(Word address, Byte value)
         {
             m_uart.write(address - 0xE000, value);
         }
+        else if ((address >= 0xE020) && (address < 0xE030))
+        {
+            m_diskio.writeReg(address - 0xE020, value);
+        }        
         else if (address == 0xE800)
         {
             m_pagereg = value;

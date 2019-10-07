@@ -10,6 +10,7 @@ set (SRC
     ${PROJECT_SOURCE_DIR}/contrib/usim/misc.cc
     ${PROJECT_SOURCE_DIR}/src/main.cpp
     ${PROJECT_SOURCE_DIR}/src/uart.cpp
+    ${PROJECT_SOURCE_DIR}/src/diskio.cpp
     ${PROJECT_SOURCE_DIR}/src/machine.cpp
 )
 

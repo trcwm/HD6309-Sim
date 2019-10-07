@@ -9,7 +9,7 @@
     * ROM starts at 0xF000.
     * Memory map register at 0xE800.
     * 8-bit expansion port at 0xE010.
-
+    * Disk I/O is at 0xE020.
 */
 
 #ifndef machine_h
@@ -21,6 +21,7 @@
 
 #include "mc6809.h"
 #include "uart.h"
+#include "diskio.h"
 
 class Machine : public mc6809
 {
@@ -111,6 +112,7 @@ protected:
     Byte m_rom[4096];
 
     UART m_uart;
+    DiskIO m_diskio;
 };
 
 #endif

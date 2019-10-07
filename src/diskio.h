@@ -28,6 +28,12 @@ public:
     uint8_t readReg(uint8_t reg);
 
 protected:
+    void setByte(uint32_t drive, 
+        uint32_t track, 
+        uint32_t sector, 
+        uint32_t byteofs, 
+        uint8_t value);
+
     uint32_t m_sectors; ///< number of sector per track
     uint32_t m_tracks;  ///< number of tracks per drive
     uint32_t m_drives;  ///< number of drives

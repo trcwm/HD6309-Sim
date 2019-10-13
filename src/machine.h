@@ -30,10 +30,10 @@ public:
     virtual ~Machine();
 
     /** load a 4k binary ROM file into 0xF000 .. 0xFFFF */
-    bool loadRom(const char *filename);
+    bool loadRom(const std::string &filename);
     
     /** load a HEX file into RAM */
-    bool loadHex(const char *filename);
+    bool loadHex(const std::string &filename);
 
     /** returns true if the UART will accept
         data via submitSerialChar()
@@ -95,6 +95,9 @@ public:
         m_debug = state;
     }
 
+    /** mount a DSK file as a drive */
+    bool mountDisk(uint8_t drive, const std::string &filename);
+
 protected:
     std::mutex m_mutex;
 
@@ -104,8 +107,8 @@ protected:
 
     int32_t m_breakpoint;
 
-	virtual Byte read(Word) override;
-	virtual void write(Word, Byte) override;
+	  virtual Byte read(Word) override;
+	  virtual void write(Word, Byte) override;
     virtual void status() override;
 
     Byte *m_memory;

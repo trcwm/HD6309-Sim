@@ -58,45 +58,6 @@ DiskIO::DiskIO()
 {
     // allocate the number of drives
     m_drives.resize(4);
-
-#if 0
-    setByte(0,0,5,16+0, 'D');
-    setByte(0,0,5,16+1, 'I');
-    setByte(0,0,5,16+2, 'R');
-    setByte(0,0,5,16+3, 0);
-    setByte(0,0,5,16+4, 0);
-    setByte(0,0,5,16+5, 0);
-    setByte(0,0,5,16+6, 0);
-    setByte(0,0,5,16+7, 0);
-    setByte(0,0,5,16+8, 'C');
-    setByte(0,0,5,16+9, 'M');
-    setByte(0,0,5,16+10, 'D');
-    setByte(0,0,5,16+11, 0);     // not used
-    setByte(0,0,5,16+12, 0);     // not used
-    setByte(0,0,5,16+13, 10);    // start track
-    setByte(0,0,5,16+14, 0);     // start sector
-    setByte(0,0,5,16+15, 10);    // end track
-    setByte(0,0,5,16+16, 1);     // end sector
-    setByte(0,0,5,16+17, 0);     // total sectors
-    setByte(0,0,5,16+18, 1);     // total sectors
-    setByte(0,0,5,16+19, 0);     // random file flag
-    setByte(0,0,5,16+20, 0);     // not used
-    setByte(0,0,5,16+21, 1);     // month
-    setByte(0,0,5,16+22, 1);     // day
-    setByte(0,0,5,16+23, 1);     // year
-
-    // write the first disk to disk ;)
-    // skip sector 0 because it doesn't exist.. 
-    FILE *fout = fopen("test.dsk","wb");
-    fwrite(&m_data[256], 1, 256*m_tracks*m_sectors, fout);
-    fclose(fout);
-
-#else
-    loadImage(0, "flex9.dsk");
-    loadImage(1, "test.dsk");
-    loadImage(2, "test.dsk");
-    loadImage(3, "test.dsk");
-#endif
 }
 
 bool DiskIO::loadImage(uint8_t drive, const std::string &filename)
@@ -132,6 +93,12 @@ bool DiskIO::getGeometry(uint8_t drive, uint8_t &tracks, uint8_t &sectors)
 {
     if (drive < m_drives.size())
     {
+        if (m_drives[drive].size() < 1024)
+        {
+            // drive image incorrect
+            return false;
+        }
+
         size_t ofs = 256*2 + 16;  // SIR record
         SIR_t *sir = (SIR_t*)&m_drives[drive][ofs];
 

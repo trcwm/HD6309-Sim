@@ -60,6 +60,7 @@ int main(int argc, char *argv[])
     options.add_options()
         ("b,break", "Set a breakpoint at HEX address", cxxopts::value<std::string>())
         ("trace", "Enable 6809 trace/debugger", cxxopts::value<bool>(debug))
+        ("d,disk", "Add a .DSK image as a drive", cxxopts::value<std::vector<std::string>>())
         ("help", "Print help")
         ("hex", "Hex file", cxxopts::value<std::vector<std::string>>())
     ;
@@ -97,8 +98,30 @@ int main(int argc, char *argv[])
         }
         else
         {
-            printf("No .hex files specified -- running without a program!\n");
+            printf("No bootrom .hex files specified!\n");
             options.help();
+            exit(1);
+        }
+
+        // load the DSK images
+        if (result.count("disk") > 0)
+        {
+            auto &v = result["disk"].as<std::vector<std::string> >();
+
+            uint8_t drive = 0;
+            for(auto dskfile : v)
+            {
+                if (!machine.mountDisk(drive, dskfile))
+                {
+                    printf("Failed to load %s in drive %d\n", dskfile.c_str(), drive);
+                    return 1;
+                }
+                else
+                {
+                    printf("Mounted %s in drive %d\n", dskfile.c_str(), drive);
+                }
+                drive++;
+            }
         }
     }
     catch(...)
@@ -125,12 +148,12 @@ int main(int argc, char *argv[])
         uint8_t c = getchar();
         switch(c)
         {
-        case 'Q':
-            quit = true;
-            break;
-        case '!':
-            printf("PC = %04X\n", machine.getPC());
-            break;
+        //case 'Q':
+        //    quit = true;
+        //    break;
+        //case '!':
+        //    printf("PC = %04X\n", machine.getPC());
+        //    break;
         case 127: // backspace ?!?
             while(!machine.clearToSend()) 
             {

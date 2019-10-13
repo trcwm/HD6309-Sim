@@ -29,10 +29,10 @@ Machine::~Machine()
     delete[] m_memory;
 }
 
-bool Machine::loadRom(const char *filename)
+bool Machine::loadRom(const std::string &filename)
 {
     std::unique_lock<std::mutex> locker(m_mutex);
-    FILE *fin = fopen(filename, "rb");
+    FILE *fin = fopen(filename.c_str(), "rb");
     if (fin != 0)
     {
         size_t bytes = fread(m_rom, 1, sizeof(m_rom), fin);
@@ -136,7 +136,7 @@ static uint32_t hexchar(uint8_t c)
     return 0;
 }
 
-bool Machine::loadHex(const char *filename)
+bool Machine::loadHex(const std::string &filename)
 {
     std::unique_lock<std::mutex> locker(m_mutex);
 
@@ -144,9 +144,9 @@ bool Machine::loadHex(const char *filename)
     uint32_t address;
     uint8_t data;
 
-    printf("Loading %s\n", filename);
+    printf("Loading %s\n", filename.c_str());
 
-    FILE *fin = fopen(filename, "rt");
+    FILE *fin = fopen(filename.c_str(), "rt");
     if (fin == 0)
     {
         return false;
@@ -241,4 +241,10 @@ bool Machine::loadHex(const char *filename)
 
     fclose(fin);
     return true;
+}
+
+bool Machine::mountDisk(uint8_t drive, const std::string &filename)
+{
+    std::unique_lock<std::mutex> locker(m_mutex);
+    return m_diskio.loadImage(drive, filename);
 }
